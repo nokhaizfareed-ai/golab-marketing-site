@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
-import { Sora, Inter, JetBrains_Mono } from "next/font/google";
+import { Montserrat, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
-const sora = Sora({
+const montserrat = Montserrat({
   subsets: ["latin"],
-  variable: "--font-sora",
-  weight: ["400", "500", "600", "700", "800"],
+  variable: "--font-montserrat",
+  weight: ["400", "500", "600", "700", "800", "900"],
   display: "swap",
+  style: ["normal", "italic"],
 });
 
 const inter = Inter({
@@ -37,7 +38,7 @@ export default function RootLayout({
   return (
     <html lang="en" data-theme="light" data-bg="grid" suppressHydrationWarning>
       <body
-        className={`${sora.variable} ${inter.variable} ${jetbrainsMono.variable}`}
+        className={`${montserrat.variable} ${inter.variable} ${jetbrainsMono.variable}`}
       >
         {children}
       </body>
