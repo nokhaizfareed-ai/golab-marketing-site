@@ -35,7 +35,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" data-theme="light" data-bg="grid" suppressHydrationWarning>
       <body
         className={`${sora.variable} ${inter.variable} ${jetbrainsMono.variable}`}
       >
