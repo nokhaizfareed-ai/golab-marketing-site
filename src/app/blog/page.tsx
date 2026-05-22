@@ -12,8 +12,7 @@ export const metadata = {
   },
 };
 
-export const dynamic = 'force-dynamic';
-
+// No force-dynamic — pages are cached and revalidated on-demand via /api/revalidate
 export default async function BlogPage() {
   const posts = await getPublishedPosts();
   return (

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Montserrat, Inter, JetBrains_Mono } from "next/font/google";
+import { CookieBanner } from "@/components/CookieBanner";
 import "./globals.css";
 
 const montserrat = Montserrat({
@@ -41,6 +42,7 @@ export default function RootLayout({
         className={`${montserrat.variable} ${inter.variable} ${jetbrainsMono.variable}`}
       >
         {children}
+        <CookieBanner />
       </body>
     </html>
   );

@@ -4,35 +4,43 @@ import Link from 'next/link';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { PageShell } from '@/components/layout/PageShell';
-import { getPostBySlug, getPublishedPosts } from '@/lib/blog';
+import { getPostBySlug } from '@/lib/blog';
 import { ImageCarousel } from './ImageCarousel';
 
-export const dynamic = 'force-dynamic';
+// No force-dynamic — cached statically, revalidated on-demand via /api/revalidate
+export const dynamicParams = true;
 
 export async function generateStaticParams() {
-  const posts = await getPublishedPosts();
-  return posts.map(p => ({ slug: p.slug }));
+  // Return empty at build time; pages render on first request then get cached
+  return [];
 }
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   const post = await getPostBySlug(params.slug);
   if (!post) return { title: 'Post not found — GoLab Automation' };
+
+  const title = post.seoTitle ?? `${post.title} — GoLab Automation`;
+  const description = post.seoDescription ?? post.excerpt;
+  const canonical = post.canonicalUrl ?? `https://golabautomation.com/blog/${post.slug}`;
+
   return {
-    title: `${post.title} — GoLab Automation`,
-    description: post.excerpt,
+    title,
+    description,
+    alternates: { canonical },
     openGraph: {
-      title: post.title,
-      description: post.excerpt,
+      title: post.seoTitle ?? post.title,
+      description,
       type: 'article',
+      url: canonical,
       publishedTime: new Date(post.createdAt).toISOString(),
       modifiedTime: new Date(post.updatedAt).toISOString(),
-      tags: [post.cat],
+      tags: [post.cat, ...(post.tags ?? [])],
       ...(post.images?.[0] ? { images: [{ url: post.images[0], alt: post.title }] } : {}),
     },
     twitter: {
       card: 'summary_large_image',
-      title: post.title,
-      description: post.excerpt,
+      title: post.seoTitle ?? post.title,
+      description,
       ...(post.images?.[0] ? { images: [post.images[0]] } : {}),
     },
   };
@@ -46,13 +54,19 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
     '@context': 'https://schema.org',
     '@type': 'Article',
     headline: post.title,
-    description: post.excerpt,
+    description: post.seoDescription ?? post.excerpt,
     datePublished: new Date(post.createdAt).toISOString(),
     dateModified: new Date(post.updatedAt).toISOString(),
-    author: { '@type': 'Organization', name: 'GoLab Automation', url: 'https://golabautomation.com' },
+    author: {
+      '@type': post.author ? 'Person' : 'Organization',
+      name: post.author ?? 'GoLab Automation',
+      url: 'https://golabautomation.com',
+    },
     publisher: { '@type': 'Organization', name: 'GoLab Automation', url: 'https://golabautomation.com' },
     articleSection: post.cat,
+    keywords: [post.cat, ...(post.tags ?? [])].join(', '),
     wordCount: post.content ? post.content.trim().split(/\s+/).length : undefined,
+    url: post.canonicalUrl ?? `https://golabautomation.com/blog/${post.slug}`,
     ...(post.images?.[0] ? { image: post.images[0] } : {}),
   };
 
@@ -73,9 +87,19 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
               <span className="blog-cat">{post.cat}</span>
               <span className="blog-date">{post.date}</span>
               {post.readTime && <span className="blog-read-time">{post.readTime} min read</span>}
+              {post.author && <span className="blog-read-time">by {post.author}</span>}
             </div>
             <h1 className="blog-post-title">{post.title}</h1>
             <p className="blog-post-excerpt">{post.excerpt}</p>
+            {post.tags && post.tags.length > 0 && (
+              <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 16 }}>
+                {post.tags.map(tag => (
+                  <span key={tag} style={{ fontSize: 11, padding: '3px 10px', borderRadius: 20, background: `${post.accent}20`, border: `1px solid ${post.accent}40`, color: post.accent, fontFamily: 'var(--font-mono)', letterSpacing: '0.04em' }}>
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
