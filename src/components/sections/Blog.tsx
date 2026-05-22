@@ -5,8 +5,8 @@ interface BlogProps {
   heading?: boolean;
 }
 
-export function Blog({ heading = true }: BlogProps) {
-  const posts = getPublishedPosts().slice(0, 3);
+export async function Blog({ heading = true }: BlogProps) {
+  const posts = (await getPublishedPosts()).slice(0, 3);
 
   return (
     <section className="section">

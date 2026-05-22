@@ -200,39 +200,63 @@ Client will maintain it?
   },
 ];
 
-export function getPublishedPosts(): BlogPost[] {
+// Runtime env-var read via Vercel API — bypasses process.env baked at build time.
+// Falls back to process.env if VERCEL_TOKEN is absent (local dev).
+async function fetchLiveBlogPosts(): Promise<string | null> {
+  const token = process.env.VERCEL_TOKEN;
+  if (!token) return null;
+  const projectId = 'prj_Kbfo0AH21n7mSFPyUXONUB4D4P3K';
+  const teamId = 'team_nIZ0k0suDNlYjsVSOMltNTA1';
+  try {
+    const listRes = await fetch(
+      `https://api.vercel.com/v9/projects/${projectId}/env?teamId=${teamId}`,
+      { headers: { Authorization: `Bearer ${token}` }, cache: 'no-store' }
+    );
+    if (!listRes.ok) return null;
+    const { envs } = await listRes.json() as { envs: { id: string; key: string; target: string[]; type?: string }[] };
+    const entry = envs.find(e => e.key === 'BLOG_POSTS' && e.target.includes('production'));
+    if (!entry || entry.type === 'sensitive') return null;
+    const valRes = await fetch(
+      `https://api.vercel.com/v9/projects/${projectId}/env/${entry.id}?teamId=${teamId}&decrypt=true`,
+      { headers: { Authorization: `Bearer ${token}` }, cache: 'no-store' }
+    );
+    if (!valRes.ok) return null;
+    const data = await valRes.json() as { value?: string };
+    return data.value ?? null;
+  } catch { return null; }
+}
+
+function parsePosts(raw: string, publishedOnly: boolean): BlogPost[] {
+  try {
+    const parsed = JSON.parse(raw) as BlogPost[];
+    if (Array.isArray(parsed)) {
+      const all = parsed.map(p => ({ ...p, slug: p.slug || slugify(p.title) }));
+      const sorted = all.sort((a, b) => b.createdAt - a.createdAt);
+      return publishedOnly ? sorted.filter(p => p.published) : sorted;
+    }
+  } catch {}
+  return publishedOnly ? DEFAULT_POSTS.filter(p => p.published) : DEFAULT_POSTS;
+}
+
+export async function getPublishedPosts(): Promise<BlogPost[]> {
+  const live = await fetchLiveBlogPosts();
+  if (live) return parsePosts(live, true);
   const raw = (process.env.BLOG_POSTS ?? '').trim();
-  if (raw) {
-    try {
-      const parsed = JSON.parse(raw) as BlogPost[];
-      if (Array.isArray(parsed)) {
-        return parsed
-          .filter(p => p.published)
-          .map(p => ({ ...p, slug: p.slug || slugify(p.title) }))
-          .sort((a, b) => b.createdAt - a.createdAt);
-      }
-    } catch {}
-  }
+  if (raw) return parsePosts(raw, true);
   return DEFAULT_POSTS.filter(p => p.published);
 }
 
-export function getAllPosts(): BlogPost[] {
+export async function getAllPosts(): Promise<BlogPost[]> {
+  const live = await fetchLiveBlogPosts();
+  if (live) return parsePosts(live, false);
   const raw = (process.env.BLOG_POSTS ?? '').trim();
-  if (raw) {
-    try {
-      const parsed = JSON.parse(raw) as BlogPost[];
-      if (Array.isArray(parsed)) {
-        return parsed
-          .map(p => ({ ...p, slug: p.slug || slugify(p.title) }))
-          .sort((a, b) => b.createdAt - a.createdAt);
-      }
-    } catch {}
-  }
+  if (raw) return parsePosts(raw, false);
   return DEFAULT_POSTS;
 }
 
-export function getPostBySlug(slug: string): BlogPost | null {
-  return getPublishedPosts().find(p => p.slug === slug) ?? null;
+export async function getPostBySlug(slug: string): Promise<BlogPost | null> {
+  const posts = await getPublishedPosts();
+  return posts.find(p => p.slug === slug) ?? null;
 }
 
 export function getCategories(posts: BlogPost[]): string[] {

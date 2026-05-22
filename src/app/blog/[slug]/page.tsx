@@ -7,12 +7,15 @@ import { PageShell } from '@/components/layout/PageShell';
 import { getPostBySlug, getPublishedPosts } from '@/lib/blog';
 import { ImageCarousel } from './ImageCarousel';
 
+export const dynamic = 'force-dynamic';
+
 export async function generateStaticParams() {
-  return getPublishedPosts().map(p => ({ slug: p.slug }));
+  const posts = await getPublishedPosts();
+  return posts.map(p => ({ slug: p.slug }));
 }
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
-  const post = getPostBySlug(params.slug);
+  const post = await getPostBySlug(params.slug);
   if (!post) return { title: 'Post not found — GoLab Automation' };
   return {
     title: `${post.title} — GoLab Automation`,
@@ -35,8 +38,8 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   };
 }
 
-export default function BlogPostPage({ params }: { params: { slug: string } }) {
-  const post = getPostBySlug(params.slug);
+export default async function BlogPostPage({ params }: { params: { slug: string } }) {
+  const post = await getPostBySlug(params.slug);
   if (!post) notFound();
 
   const jsonLd = {

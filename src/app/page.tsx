@@ -12,6 +12,8 @@ import { Team } from '@/components/sections/Team';
 import { Blog } from '@/components/sections/Blog';
 import { Contact } from '@/components/sections/Contact';
 
+export const dynamic = 'force-dynamic';
+
 export default function HomePage() {
   return (
     <PageShell>

@@ -12,8 +12,10 @@ export const metadata = {
   },
 };
 
-export default function BlogPage() {
-  const posts = getPublishedPosts();
+export const dynamic = 'force-dynamic';
+
+export default async function BlogPage() {
+  const posts = await getPublishedPosts();
   return (
     <PageShell>
       <section className="section">
