@@ -10,6 +10,7 @@ export function Hero() {
       style={{
         overflow: 'hidden',
         borderRadius: 'var(--r-xl)',
+        color: '#FFFFFF',
         // always white text regardless of light/dark theme
         ['--fg-1' as any]: '#FFFFFF',
         ['--fg-2' as any]: 'rgba(255,255,255,0.78)',
