@@ -5,7 +5,19 @@ import { ShaderAnimation } from '../hero/ShaderAnimation';
 
 export function Hero() {
   return (
-    <section className="hero" style={{ overflow: 'hidden', borderRadius: 'var(--r-xl)' }}>
+    <section
+      className="hero"
+      style={{
+        overflow: 'hidden',
+        borderRadius: 'var(--r-xl)',
+        // force dark-theme token values so text is white against the shader background
+        ['--fg-1' as any]: '#F4ECEE',
+        ['--fg-2' as any]: '#B9A8AE',
+        ['--fg-3' as any]: '#6E5A60',
+        ['--hairline' as any]: 'rgba(255, 220, 225, 0.08)',
+        ['--hairline-strong' as any]: 'rgba(255, 220, 225, 0.16)',
+      }}
+    >
       <ShaderAnimation />
       {/* overlay so text stays readable over the bright shader */}
       <div
