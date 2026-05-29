@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Montserrat, Inter, JetBrains_Mono } from "next/font/google";
+import { Montserrat, Poppins, JetBrains_Mono } from "next/font/google";
 import { CookieBanner } from "@/components/CookieBanner";
 import "./globals.css";
 
@@ -11,10 +11,10 @@ const montserrat = Montserrat({
   style: ["normal", "italic"],
 });
 
-const inter = Inter({
+const poppins = Poppins({
   subsets: ["latin"],
-  variable: "--font-inter",
-  weight: ["400", "500", "600", "700"],
+  variable: "--font-poppins",
+  weight: ["400", "500", "600", "700", "800", "900"],
   display: "swap",
 });
 
@@ -39,7 +39,7 @@ export default function RootLayout({
   return (
     <html lang="en" data-theme="light" data-bg="grid" suppressHydrationWarning>
       <body
-        className={`${montserrat.variable} ${inter.variable} ${jetbrainsMono.variable}`}
+        className={`${montserrat.variable} ${poppins.variable} ${jetbrainsMono.variable}`}
       >
         {children}
         <CookieBanner />
