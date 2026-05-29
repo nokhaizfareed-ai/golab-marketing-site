@@ -232,9 +232,9 @@ export function WorkflowCard3D() {
 
         {/* Footer stats */}
         <div className="wfm-foot">
-          <div className="wfm-foot-stat"><span className="wfm-num">2,847</span><span className="wfm-lbl">routed</span></div>
-          <div className="wfm-foot-stat"><span className="wfm-num">12s</span><span className="wfm-lbl">latency</span></div>
-          <div className="wfm-foot-stat"><span className="wfm-num">99.7%</span><span className="wfm-lbl">uptime</span></div>
+          <div className="wfm-foot-stat"><span className="wfm-num" style={{ color: 'var(--brand-red-soft)' }}>2,847</span><span className="wfm-lbl">routed</span></div>
+          <div className="wfm-foot-stat"><span className="wfm-num" style={{ color: 'var(--brand-red-soft)' }}>12s</span><span className="wfm-lbl">latency</span></div>
+          <div className="wfm-foot-stat"><span className="wfm-num" style={{ color: 'var(--brand-red-soft)' }}>99.7%</span><span className="wfm-lbl">uptime</span></div>
         </div>
 
         {/* Floating chips */}
@@ -245,7 +245,7 @@ export function WorkflowCard3D() {
           </div>
         </div>
         <div className="wf-float wf-float-br">
-          <div className="chip">+47% conversion</div>
+          <div className="chip chip-red">+47% conversion</div>
         </div>
       </div>
     </div>
