@@ -1,11 +1,22 @@
 import { GlassButton } from '../atoms/GlassButton';
 import { Icons } from '../atoms/Icons';
 import { WorkflowCard3D } from '../hero/WorkflowCard3D';
+import { ShaderAnimation } from '../hero/ShaderAnimation';
 
 export function Hero() {
   return (
-    <section className="hero">
-      <div className="hero-grid">
+    <section className="hero" style={{ overflow: 'hidden', borderRadius: 'var(--r-xl)' }}>
+      <ShaderAnimation />
+      {/* overlay so text stays readable over the bright shader */}
+      <div
+        aria-hidden="true"
+        style={{
+          position: 'absolute', inset: 0,
+          background: 'linear-gradient(135deg, rgba(8,3,5,0.72) 0%, rgba(17,7,10,0.55) 60%, rgba(8,3,5,0.78) 100%)',
+          pointerEvents: 'none',
+        }}
+      />
+      <div className="hero-grid" style={{ position: 'relative', zIndex: 1 }}>
         <div className="hero-copy">
           <span className="chip chip-red">
             <span className="pulse-dot" style={{ background: '#FF3D4F' }} />
@@ -48,3 +59,4 @@ export function Hero() {
     </section>
   );
 }
+
