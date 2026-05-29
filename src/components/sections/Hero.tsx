@@ -10,12 +10,12 @@ export function Hero() {
       style={{
         overflow: 'hidden',
         borderRadius: 'var(--r-xl)',
-        // force dark-theme token values so text is white against the shader background
-        ['--fg-1' as any]: '#F4ECEE',
-        ['--fg-2' as any]: '#B9A8AE',
-        ['--fg-3' as any]: '#6E5A60',
-        ['--hairline' as any]: 'rgba(255, 220, 225, 0.08)',
-        ['--hairline-strong' as any]: 'rgba(255, 220, 225, 0.16)',
+        // always white text regardless of light/dark theme
+        ['--fg-1' as any]: '#FFFFFF',
+        ['--fg-2' as any]: 'rgba(255,255,255,0.78)',
+        ['--fg-3' as any]: 'rgba(255,255,255,0.50)',
+        ['--hairline' as any]: 'rgba(255,255,255,0.12)',
+        ['--hairline-strong' as any]: 'rgba(255,255,255,0.22)',
       }}
     >
       <ShaderAnimation />
